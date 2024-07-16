@@ -6,7 +6,7 @@ import { icons } from '@/constants'
 interface Props {
   title: string
   value: string
-  placeholder: string
+  placeholder?: string
   handleChange: (event: any) => void
   otherStyles: string
   keyboardType?: string
