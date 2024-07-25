@@ -1,13 +1,17 @@
-import { StyleSheet, ScrollView, View, Image, Text } from 'react-native'
+import { StyleSheet, ScrollView, View, Image, Text, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import {images} from '../../constants'
 import FormField from '@/components/FormField'
 import CustomButtom from '@/components/CustomButtom'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { createUser } from '@/lib/appwrite'
+import { useGlobalContext } from '@/context/GlobalProvider'
 
 const SignUp = () => {
+  const { setUser, setIsLogged } = useGlobalContext();
+
   const [form, setForm] = useState({
     username: '',
     email: '',
@@ -16,8 +20,31 @@ const SignUp = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!form.username || !form.email || !form.password) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните необходимые поля')
 
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const result = await createUser(form.email, form.password, form.username)
+
+      if (!result) {
+        Alert.alert('Ошибка')
+        return
+      }
+      setUser(result)
+      setIsLogged(true)
+
+      router.replace('/home')
+    } catch (error) {
+      Alert.alert('Ошибка', error.message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -37,7 +64,6 @@ const SignUp = () => {
           <FormField 
             title='Username'
             value={form.username}
-            placeholder='Username'
             handleChange={(e) => setForm({...form, username: e})}
             otherStyles='mt-10'
           />
@@ -45,7 +71,6 @@ const SignUp = () => {
           <FormField 
             title='Email'
             value={form.email}
-            placeholder='Email Address'
             handleChange={(e) => setForm({...form, email: e})}
             otherStyles='mt-7'
             keyboardType='email'
@@ -54,7 +79,6 @@ const SignUp = () => {
           <FormField 
             title='Password'
             value={form.password}
-            placeholder='password'
             handleChange={(e) => setForm({...form, password: e})}
             otherStyles='mt-7'
           />
@@ -70,6 +94,7 @@ const SignUp = () => {
             <Text className='text-lg text-gray-100 font-pregular'>
               Уже есть аккаунт?
             </Text>
+
             <Link href='/sign-in' className='text-lg font-psemibold text-secondary'>Sign In</Link>
           </View>
         </View>

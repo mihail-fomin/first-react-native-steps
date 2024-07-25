@@ -25,18 +25,21 @@ const FormField = ({
 
   return (
     <View className={`space-y-2 ${otherStyles}`}>
+
       <Text className='text-base text-gray-100 font-pmedium'>
         {title}
       </Text>
+
       <View className='w-full h-16 px-4 bg-black-100 rounded-2xl border-black-200 focus:border-secondary border-2 items-center flex-row'>
         <TextInput
-          className='flex-1 text-white font-psemibold text-base'
+          className='flex-1 text-white font-psemibold text-base items-center'
           value={value}
           placeholder={placeholder}
           placeholderTextColor='#7b7b8b'
           onChangeText={handleChange}
           secureTextEntry={title === 'Password' && !shoWPassord}
         />
+
         {title === 'Password' && (
           <TouchableOpacity
             className='flex-shrink-0 ml-2'

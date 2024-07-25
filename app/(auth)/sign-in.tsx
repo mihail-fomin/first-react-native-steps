@@ -1,13 +1,17 @@
-import { StyleSheet, ScrollView, View, Image, Text } from 'react-native'
+import { StyleSheet, ScrollView, View, Image, Text, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import {images} from '../../constants'
 import FormField from '@/components/FormField'
 import CustomButtom from '@/components/CustomButtom'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { signIn } from '@/lib/appwrite'
+import { useGlobalContext } from '@/context/GlobalProvider'
 
 const SignIn = () => {
+  const { setUser, setIsLogged } = useGlobalContext();
+
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -15,8 +19,28 @@ const SignIn = () => {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните необходимые поля')
 
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      await signIn(form.email, form.password);
+      const result = await getCurrentUser();
+      setUser(result);
+      setIsLogged(true);
+
+      Alert.alert("Success", "User signed in successfully");
+      router.replace('/home')
+    } catch (error) {
+      Alert.alert('Ошибка', error.message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -36,7 +60,6 @@ const SignIn = () => {
           <FormField 
             title='Email'
             value={form.email}
-            placeholder='Email Address'
             handleChange={(e) => setForm({...form, email: e})}
             otherStyles='mt-7'
             keyboardType='email'
@@ -45,7 +68,6 @@ const SignIn = () => {
           <FormField 
             title='Password'
             value={form.password}
-            placeholder='password'
             handleChange={(e) => setForm({...form, password: e})}
             otherStyles='mt-7'
           />
