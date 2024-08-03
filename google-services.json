@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "171773686947",
+    "project_id": "mary-android-app",
+    "storage_bucket": "mary-android-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171773686947:android:eda415d1481515298ffb16",
+        "android_client_info": {
+          "package_name": "com.mary.androidapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1Nq3JXAMraTRLDpN7Tx41UkBKLEIfNcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
