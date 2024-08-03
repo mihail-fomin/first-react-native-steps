@@ -2,12 +2,15 @@ import { StyleSheet, ScrollView, View, Image, Text, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+
 import {images} from '../../constants'
 import FormField from '@/components/FormField'
 import CustomButtom from '@/components/CustomButtom'
 import { Link, router } from 'expo-router'
 import { createUser } from '@/lib/appwrite'
 import { useGlobalContext } from '@/context/GlobalProvider'
+import { auth } from '../firebaseConfig'
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const SignUp = () => {
   const { setUser, setIsLogged } = useGlobalContext();
@@ -21,7 +24,7 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async () => {
-    if (!form.username || !form.email || !form.password) {
+    if (!form.email || !form.password) {
       Alert.alert('Ошибка', 'Пожалуйста, заполните необходимые поля')
 
       return
@@ -30,7 +33,7 @@ const SignUp = () => {
     setIsLoading(true)
 
     try {
-      const result = await createUser(form.email, form.password, form.username)
+      const result = await createUserWithEmailAndPassword(auth, form.email, form.password);      
 
       if (!result) {
         Alert.alert('Ошибка')
@@ -40,7 +43,7 @@ const SignUp = () => {
       setIsLogged(true)
 
       router.replace('/home')
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert('Ошибка', error.message)
     } finally {
       setIsLoading(false)
