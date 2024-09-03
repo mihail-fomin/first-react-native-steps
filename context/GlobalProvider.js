@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getCurrentUser } from "../lib/appwrite";
+import * as SecureStore from 'expo-secure-store';
 
 const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
@@ -10,26 +10,25 @@ const GlobalProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await getCurrentUser();
-        if (res) {
-          setIsLogged(true);
-          setUser(res);
-        } else {
-          setIsLogged(false);
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Failed to fetch current user:", error);
-        setIsLogged(false);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+    async function getAccessToken() {
+        console.log('Fetching user');
 
-    fetchUser();
+        try {
+            let result = await SecureStore.getItemAsync('accessToken');
+            if (result) {
+                console.log('result: ', result);
+                setIsLogged(true);
+            } else {
+              console.log("No values stored under that accessToken.");
+            }
+        } catch (error) {
+            console.error("Failed to fetch current user:", error);
+            setIsLogged(false);
+            setUser(null);
+        }
+      }
+
+      getAccessToken();
   }, []);
 
   return (

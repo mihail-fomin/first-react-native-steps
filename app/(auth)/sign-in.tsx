@@ -6,8 +6,12 @@ import {images} from '../../constants'
 import FormField from '@/components/FormField'
 import CustomButtom from '@/components/CustomButtom'
 import { Link, router } from 'expo-router'
-import { getCurrentUser, signIn } from '@/lib/appwrite'
 import { useGlobalContext } from '@/context/GlobalProvider'
+import * as SecureStore from 'expo-secure-store';
+
+async function saveToken(key: string, value: string) {
+    await SecureStore.setItemAsync(key, value);
+}
 
 const SignIn = () => {
   const { setUser, setIsLogged } = useGlobalContext();
@@ -29,14 +33,32 @@ const SignIn = () => {
     setIsLoading(true)
 
     try {
-      await signIn(form.email, form.password);
-      const result = await getCurrentUser();
-      setUser(result);
-      setIsLogged(true);
+        const result = await fetch('http://192.168.0.12:3000/auth/login', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                // "Authorization": "Bearer "
+              },
+              body: JSON.stringify({
+                  email: form.email,
+                  password: form.password
+              })
+          });
+  
+        if (result.ok) {
+            const data = await result.json();
+            console.log('Response Data:', data);
+            Alert.alert("Success", "User signed in successfully");
 
-      Alert.alert("Success", "User signed in successfully");
-      router.replace('/home')
-    } catch (error) {
+            await saveToken('accessToken', data.accessToken);
+
+            setUser(result);
+            setIsLogged(true);
+            router.replace('/home')
+        } else {
+            Alert.alert('Sign up failed', `Request failed with status: ${result.status}`);
+        }
+    } catch (error: any) {
       Alert.alert('Ошибка', error.message)
     } finally {
       setIsLoading(false)

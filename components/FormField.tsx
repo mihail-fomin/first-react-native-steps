@@ -8,7 +8,7 @@ interface Props {
   value: string
   placeholder?: string
   handleChange: (event: any) => void
-  otherStyles: string
+  otherStyles?: string
   keyboardType?: string
 }
 

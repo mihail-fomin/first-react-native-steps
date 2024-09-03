@@ -2,15 +2,12 @@ import { StyleSheet, ScrollView, View, Image, Text, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-
 import {images} from '../../constants'
 import FormField from '@/components/FormField'
 import CustomButtom from '@/components/CustomButtom'
 import { Link, router } from 'expo-router'
-import { createUser } from '@/lib/appwrite'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import { auth } from '../firebaseConfig'
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 
 const SignUp = () => {
   const { setUser, setIsLogged } = useGlobalContext();
@@ -33,16 +30,28 @@ const SignUp = () => {
     setIsLoading(true)
 
     try {
-      const result = await createUserWithEmailAndPassword(auth, form.email, form.password);      
+        const result = await fetch('http://192.168.0.12:3000/users/', {
+          method: 'POST',
+          headers: {
+              "Content-Type": "application/json",
+              // "Authorization": "Bearer "
+            },
+            body: JSON.stringify({
+                email: form.email,
+                name: form.username,
+                password: form.password
+            })
+        });
 
-      if (!result) {
-        Alert.alert('Ошибка')
-        return
-      }
-      setUser(result)
-      setIsLogged(true)
+        if (result.ok) {
+            const data = await result.json();
+            console.log('Response Data:', data);
+            Alert.alert('Success!');
+            router.replace('/home')
+        } else {
+            Alert.alert('Sign up failed', `Request failed with status: ${result.status}`);
+        }
 
-      router.replace('/home')
     } catch (error: any) {
       Alert.alert('Ошибка', error.message)
     } finally {
