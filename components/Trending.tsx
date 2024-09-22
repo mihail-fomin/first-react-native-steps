@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import * as Animatable from 'react-native-animatable'
 import { Post } from '@/app/utils/hooks/usePosts'
 import { icons } from '@/constants'
+import { WebView } from 'react-native-webview';
+import { Video, ResizeMode } from 'expo-av'
 
 interface Props {
   posts: Post[]
@@ -10,7 +12,7 @@ interface Props {
 
 const zoomIn = {
     0: { transform: [{ scale: 0.9 }] },
-    1: { transform: [{ scale: 1 }] },
+    1: { transform: [{ scale: 1.1 }] },
   };
   
   const zoomOut = {
@@ -29,7 +31,10 @@ const TrendingItem = ({ activeItem, item }: { activeItem: Post, item: Post}) => 
             duration={500}
         >
             {isPlaying ? (
-                <Text className='text-white'>Playing</Text>
+                <WebView
+                    className='w-52 h-72 rounded-[35px] mt-3 bg-white/10'
+                    source={{ uri: item.videoUrl }}
+                />
             ): (
                 <TouchableOpacity
                     className='relative justify-center items-center'
@@ -57,7 +62,7 @@ const Trending = ({ posts }: Props) => {
     const [activeItem, setActiveItem] = useState(posts[0])
 
     const viewableItemsChanged = ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-        console.log('viewableItems: ', viewableItems);
+
         if (viewableItems.length > 0) {
             setActiveItem(viewableItems[0].item);
         }

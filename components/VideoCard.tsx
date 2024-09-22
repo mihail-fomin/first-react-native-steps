@@ -1,6 +1,7 @@
 import { icons } from '@/constants'
 import React, { useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
+import WebView from 'react-native-webview'
 
 type Props = {
     video:
@@ -54,7 +55,10 @@ const VideoCard = (props: Props) => {
         </View>
 
         {isPlaying ? (
-            <Text className='text-white'>Playing</Text>
+            <WebView
+            className='w-52 h-72 rounded-[35px] mt-3 bg-white/10'
+            source={{ uri: props.video.videoUrl }}
+        />
         ) : (
             <TouchableOpacity
                 activeOpacity={0.7}
