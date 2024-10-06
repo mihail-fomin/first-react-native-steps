@@ -56,9 +56,9 @@ const VideoCard = (props: Props) => {
 
         {isPlaying ? (
             <WebView
-            className='w-52 h-72 rounded-[35px] mt-3 bg-white/10'
-            source={{ uri: props.video.videoUrl }}
-        />
+                className='w-96 h-72 rounded-[35px] mt-3 bg-white/10'
+                source={{ uri: props.video.videoUrl }}
+            />
         ) : (
             <TouchableOpacity
                 activeOpacity={0.7}
