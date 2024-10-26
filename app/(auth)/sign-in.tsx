@@ -33,11 +33,12 @@ const SignIn = () => {
     setIsLoading(true)
 
     try {
+
         const result = await fetch('http://192.168.0.12:3000/auth/login', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
-                // "Authorization": "Bearer "
+                // "Authorization": `Bearer ${token}`
               },
               body: JSON.stringify({
                   email: form.email,

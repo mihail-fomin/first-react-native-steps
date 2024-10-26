@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, Image, SafeAreaView, ScrollView, Text, View } from 'react-native'
 import React from 'react'
 import { images } from '../constants'
 import CustomButtom from '@/components/CustomButtom'
@@ -10,6 +10,16 @@ import { useGlobalContext } from '@/context/GlobalProvider'
 
 const RootLayout = () => {
   const { isLoading, isLogged } = useGlobalContext()
+
+    if (isLoading) {
+        return   <View className='h-screen flex justify-center items-center'>
+        <ActivityIndicator />
+        {/* <ActivityIndicator size="large" />
+        <ActivityIndicator size="small" color="#0000ff" />
+        <ActivityIndicator size="large" color="#00ff00" /> */}
+      </View>
+    
+    }
 
     if (!isLoading && isLogged) return <Redirect href='/home'/>
 
